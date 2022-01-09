@@ -37,7 +37,8 @@ namespace MCGalaxy {
         public override LevelPermission defaultRank { get { return LevelPermission.Guest; } }
 
         public override void Use(Player p, string message) {
-            LevelPermission minRankPermission = LevelPermission.AdvBuilder;
+	// Change this to LevelPermission.Operator if your lowest staff rank is Operator.
+            LevelPermission minRankPermission = LevelPermission.AdvBuilder; 
 			List<Group> ranks = Group.GroupList;
 			List<string> output = new List<string>();
 			foreach (Group rank in ranks)
