@@ -18,7 +18,7 @@ namespace MCGalaxy
 		public override void Use(Player p, string message)
 		{
 			if (!CanSpeak(p, message))
-            {
+            		{
 				return;
 			}
 
@@ -28,19 +28,19 @@ namespace MCGalaxy
 				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, null);
 			}
 			else
-            {
+            		{
 				string suffix = RandomMessage();
-				Chat.MessageChat(ChatScope.Global, p, p.color + p.DisplayName + " %SISSUED /BANALL " + suffix, null, null);
+				Chat.MessageChat(ChatScope.Global, p, p.ColoredName + " %SISSUED /BANALL " + suffix, null, null);
 			}
 		}
 
 		public string RandomMessage()
-        {
+		{
 			Random random = new Random();
 			int val = random.Next(12);
 
 			switch(val)
-            {
+           		{
 				case 0:
 					return "%cbut banned themself.";
 				case 1:
@@ -67,8 +67,8 @@ namespace MCGalaxy
 					return "%cbut LegoSpaceGuy hacked it into /lick.";
 				default:
 					return "%cbut shit hit the fan. %cThis is an error message, contact @Panda";
-            }
-        }
+            		}
+        	}
 
 		/// <summary>
 		/// Function to bring about the real possibility of "the yeetening"
@@ -83,17 +83,17 @@ namespace MCGalaxy
 			// If we hit this god-forsaken value... let Panda have his fun :D
 			if (value == 420.69)
 			{
-				Chat.MessageGlobal($"{p.name} %cHAS ACTIVATED THE REAL BANALL (%A0.01% CHANCE FOR ADMINS+%c).");
+				Chat.MessageGlobal($"{p.ColoredName} %cHAS ACTIVATED THE REAL BANALL (%A0.01% CHANCE FOR ADMINS+%c).");
 				Chat.MessageGlobal("%cALL ONLINE PLAYERS WILL BE TEMPBANNED IN 3 SECONDS.");
 				Thread.Sleep(3000); // 3 second grace period to logout before banall
 
 				// Ban all online users for 1 day
 				Player[] onlineUsers = PlayerInfo.Online.Items;
 				foreach(Player user in onlineUsers)
-                {
+				{
 					Command.Find("tempban").Use(null, user.name + " 1d BANALL by " + p.name + ".");
 					Command.Find("kick").Use(null, user.name + " Banned for 1d by " + p.name + " using BANALL!");
-                }
+                		}
 			}
 			return value;
 		}
