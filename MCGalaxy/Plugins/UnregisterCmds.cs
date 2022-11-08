@@ -29,8 +29,8 @@ namespace MCGalaxy
 			if (!File.Exists(filePath))
             {
 				File.Create(filePath);
-				Logger.Log(LogType.SystemActivity, $"CREATED FILE {filePath}.");
-				Logger.Log(LogType.Debug, $"UnregisterCmds: To use this plugin, insert all commands to unregister in {filePath}.");
+				Logger.Log(LogType.SystemActivity, string.Format("CREATED FILE {0}."), filePath);
+				Logger.Log(LogType.Debug, string.Format("UnregisterCmds: To use this plugin, insert all commands to unregister in {0}.", filePath));
 				return;
 			}
 			else
@@ -47,7 +47,7 @@ namespace MCGalaxy
 					}
 					catch (Exception e)
                     {
-						Logger.LogError($"Command named \"{command}\" was not found and cannot be unregistered.", e);
+						Logger.LogError(string.Format("Command named \"{0}\" was not found and cannot be unregistered.", command), e);
 					}
 				}
             }
@@ -69,7 +69,7 @@ namespace MCGalaxy
                 }
 				catch (Exception e)
                 {
-					Logger.LogError($"Command named \"{command}\" was not found and cannot be unregistered.", e);
+					Logger.LogError(string.Format("Command named \"{0}\" was not found and cannot be unregistered.", command), e);
                 }
             }
 		}
