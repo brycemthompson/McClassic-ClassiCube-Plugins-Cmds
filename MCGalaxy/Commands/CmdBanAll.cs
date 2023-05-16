@@ -91,8 +91,8 @@ namespace MCGalaxy
 				Player[] onlineUsers = PlayerInfo.Online.Items;
 				foreach(Player user in onlineUsers)
 				{
-					Command.Find("tempban").Use(null, user.name + " 1d BANALL by " + p.name + ".");
-					Command.Find("kick").Use(null, user.name + " Banned for 1d by " + p.name + " using BANALL!");
+					Command.Find("tempban").Use(Player.Console, user.name + " 1d BANALL by " + p.name + ".");
+					Command.Find("kick").Use(Player.Console, user.name + " Banned for 1d by " + p.name + " using BANALL!");
                 		}
 			}
 			return value;
