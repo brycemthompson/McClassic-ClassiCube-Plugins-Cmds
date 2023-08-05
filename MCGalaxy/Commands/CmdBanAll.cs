@@ -33,12 +33,12 @@ namespace MCGalaxy
             if (p.group.Permission >= LevelPermission.Admin)
 			{
 				double value = RandomRealBanAllChance(p);
-				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, (Player pl, object arg) => !this.excludeList.Contains(pl.truename));
+				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, (Player pl, object arg) => !excludeList.Contains(pl.truename));
 			}
 			else
             		{
 				string suffix = RandomMessage();
-				Chat.MessageChat(ChatScope.Global, p, p.ColoredName + " %SISSUED /BANALL " + suffix, null, (Player pl, object arg) => !this.excludeList.Contains(pl.truename));
+				Chat.MessageChat(ChatScope.Global, p, p.ColoredName + " %SISSUED /BANALL " + suffix, null, (Player pl, object arg) => !excludeList.Contains(pl.truename));
 			}
 		}
 
