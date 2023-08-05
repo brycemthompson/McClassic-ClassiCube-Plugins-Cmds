@@ -30,7 +30,7 @@ namespace MCGalaxy
 				return;
 			}
 
-            if (p.group.Permission >= LevelPermission.Admin)
+			if (p.group.Permission >= LevelPermission.Admin)
 			{
 				double value = RandomRealBanAllChance(p);
 				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, (Player pl, object arg) => !excludeList.Contains(pl.truename));
