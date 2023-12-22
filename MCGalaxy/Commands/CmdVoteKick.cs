@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  * @author Panda
  * Date: 12/22/2023
  * Description: VoteKick - Forked and rewritten from MCDzienny so that players
@@ -11,14 +11,14 @@ using MCGalaxy.Tasks;
 namespace MCGalaxy
 {
     /// <summary>
-    /// CustomVoteObject - Used in the VoteCallback to send information
+    /// CustomVoteKickObject - Used in the VoteCallback to send information
     /// </summary>
-    public class CustomVoteObject
+    public class CustomVoteKickObject
     {
         public Player targerPlayer;
         public string reason;
 
-        public CustomVoteObject(Player targerPlayer, string reason)
+        public CustomVoteKickObject(Player targerPlayer, string reason)
         {
             this.targerPlayer = targerPlayer;
             this.reason = reason;
@@ -74,8 +74,8 @@ namespace MCGalaxy
             Server.voting = true;
             Server.NoVotes = 0; Server.YesVotes = 0;
             Chat.MessageGlobal("&2 VOTE: &S{0} &S(type &2Yes &Sor &cNo &Sin chat)", message);
-            CustomVoteObject cvo = new CustomVoteObject(targetPlayer, reason);
-            Server.MainScheduler.QueueOnce(VoteCallback, cvo, TimeSpan.FromSeconds(15));
+            CustomVoteKickObject cvko = new CustomVoteKickObject(targetPlayer, reason);
+            Server.MainScheduler.QueueOnce(VoteCallback, cvko, TimeSpan.FromSeconds(15));
         }
 
         /// <summary>
@@ -99,11 +99,11 @@ namespace MCGalaxy
             Player[] players = PlayerInfo.Online.Items;
             foreach (Player pl in players) pl.voted = false;
 
-            CustomVoteObject cvo = (CustomVoteObject)task.State;
+            CustomVoteKickObject cvko = (CustomVoteKickObject)task.State;
 
             // If the majority of users vote yes, kick the player
             if (Server.YesVotes > Server.NoVotes) {
-                Command.Find("kick").Use(Player.Console, string.Format(" {0} {1}", cvo.targerPlayer.truename, cvo.reason));
+                Command.Find("kick").Use(Player.Console, string.Format(" {0} {1}", cvko.targerPlayer.truename, cvko.reason));
             }
         }
     }
