@@ -2,7 +2,7 @@
  * @author Panda
  * Date: 12/22/2023
  * Description: VoteBan - Forked and rewritten from MCDzienny so that players
- * can start a vote to permanently remove a player from the game.
+ * can start a vote to remove a player from the game for 1 hour.
  */
 
 using System;
