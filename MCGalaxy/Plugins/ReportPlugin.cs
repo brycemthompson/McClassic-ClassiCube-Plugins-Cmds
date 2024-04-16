@@ -35,8 +35,8 @@ namespace MCGalaxy {
         public override string shortcut { get { return "rep"; } }
         public override bool museumUsable { get { return true; } }
         public override LevelPermission defaultRank { get { return LevelPermission.Guest; } }
-        public const string playerReportID = "YOUR CHANNEL ID HERE"; // REPLACE THE CONTENTS OF THIS STRING WITH YOUR DISCORD REPORT CHANNEL ID.
-        public const string bugReportID = "YOUR CHANNEL ID HERE"; // REPLACE THE CONTENTS OF THIS STRING WITH YOUR DISCORD BUG REPORT CHANNEL ID.
+        public const string playerReportID = "YOUR CHANNEL ID"; // REPLACE THE CONTENTS OF THIS STRING WITH YOUR DISCORD REPORT CHANNEL ID.
+        public const string bugReportID = "YOUR CHANNEL ID"; // REPLACE THE CONTENTS OF THIS STRING WITH YOUR DISCORD BUG REPORT CHANNEL ID.
         public const string bugEmbedColor = "2303786";
         public const string reportEmbedColor = "15158332";
 
@@ -66,8 +66,10 @@ namespace MCGalaxy {
                 p.Message(e.StackTrace);
                 return;
             }
-
-            p.Message($"%aSubmitted Report: %S\"{message}\" %ato the staff team.");
+            
+            // Strip the first word and trailing space from the report message
+            string reportMessage = message.Substring(message.IndexOf(" ") + 1);
+            p.Message($"%aSubmitted Report: %S\"{reportMessage}\" %ato the staff team.");
             p.Message("%SPlease be patient. Staff are generally AFK, and will privately contact you ASAP!");
         }
 
