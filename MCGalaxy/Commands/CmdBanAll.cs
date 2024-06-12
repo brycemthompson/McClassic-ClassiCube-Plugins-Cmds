@@ -5,12 +5,20 @@ CmdBanAll - Originally banned all online players from the server - Modified for 
 using MCGalaxy.Commands.Chatting;
 using System;
 using System.Threading;
+using System.Collections.Generic;
+using System.Reflection.Metadata;
+using System.Linq;
 
 namespace MCGalaxy
 {
 	public class CmdBanall : MessageCmd
 	{
-		public override string name { get { return "Banall"; } }
+        List<string> excludeList = new List<string>()
+		{
+			"ReaperNazgul7",
+		};
+
+        public override string name { get { return "Banall"; } }
 		public override string shortcut { get { return ""; } }
 		public override string type { get { return "moderation"; } }
 		public override bool museumUsable { get { return false; } }
@@ -25,12 +33,12 @@ namespace MCGalaxy
 			if (p.group.Permission >= LevelPermission.Admin)
 			{
 				double value = RandomRealBanAllChance(p);
-				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, null);
+				Chat.MessageChat(ChatScope.Global, p, $"%c[{p.group.Name}] {p.ColoredName}:%S Real BanAll chance calculated: %c{value}. %SNeeded: %a420.69", null, (Player pl, object arg) => !excludeList.Contains(pl.truename));
 			}
 			else
             		{
 				string suffix = RandomMessage();
-				Chat.MessageChat(ChatScope.Global, p, p.ColoredName + " %SISSUED /BANALL " + suffix, null, null);
+				Chat.MessageChat(ChatScope.Global, p, p.ColoredName + " %SISSUED /BANALL " + suffix, null, (Player pl, object arg) => !excludeList.Contains(pl.truename));
 			}
 		}
 
