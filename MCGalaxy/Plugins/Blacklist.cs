@@ -24,7 +24,7 @@ namespace MCGalaxy
         public const string PATH = "extra/cmdblacklist.txt";
 
         // Change this value to true if you want the command to additionally pervisit blacklist in LvlBlacklist.
-        public static bool DoPervisitBlacklist = true;
+        public static bool DoPervisitBlacklist = false;
 
         public static PlayerExtList blacklistData;
 
