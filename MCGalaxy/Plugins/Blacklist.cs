@@ -1,4 +1,4 @@
-﻿//reference MCGalaxy_.dll
+//reference MCGalaxy_.dll
 //reference System.dll
 //reference System.Core.dll
 
@@ -22,6 +22,9 @@ namespace MCGalaxy
         public override string name { get { return "BlacklistPlugin"; } }
 
         public const string PATH = "extra/cmdblacklist.txt";
+
+        // Change this value to true if you want the command to additionally pervisit blacklist in LvlBlacklist.
+        public static bool DoPervisitBlacklist = true;
 
         public static PlayerExtList blacklistData;
 
@@ -269,71 +272,32 @@ namespace MCGalaxy
         public override void Use(Player p, string message, CommandData data) {
 
             Dictionary<string, string> arguments = ParseMessage(p, message);
+            bool isBlacklisted;
             
             // Bad args, fail cmd
-            if (arguments.Count < 1 || arguments == null) { return; }
-
+            if (arguments == null || arguments.Count < 1) { return; }
+            
             Level targetLevel = LevelInfo.FindExact(arguments["Map"]);
 
-            // If user is already map blacklisted, build whitelist the user
-            if (IsAlreadyBlacklisted(p, targetLevel, arguments["TargetUser"])) {
+            // Reason argument found, use it.
+            if (arguments.ContainsKey("Reason")) {
+                isBlacklisted = UpdateLvlPerbuild(p, targetLevel, arguments["TargetUser"]);
 
-                // Reason argument found, use it.
-                if (arguments.ContainsKey("Reason")) {
-                    Find("perbuild").Use(p, string.Format("+{0}", arguments["TargetUser"]));
-
-                    Chat.MessageGlobal(string.Format("{0} %abuild whitelisted {1} %fon %b{2} %ffor %a{3}%f.",
-                        p.ColoredName, arguments["TargetUser"], targetLevel.ColoredName, arguments["Reason"]));
-
-                    Find("send").Use(p, string.Format("{0} %abuild whitelisted %fon {1} %ffor %a{2}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName, arguments["Reason"]));
+                if (BlacklistPlugin.DoPervisitBlacklist) {
+                    UpdateLvlPervisit(p, targetLevel, arguments["TargetUser"]);
                 }
-                else {
-                    Find("perbuild").Use(p, string.Format("+{0}", arguments["TargetUser"]));
 
-                    Chat.MessageGlobal(string.Format("{0} %abuild whitelisted %f{1} on {2}%f.",
-                        p.ColoredName, arguments["TargetUser"], targetLevel.ColoredName));
-
-                    Find("send").Use(p, string.Format("{0} %abuild whitelisted %fon {1}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName));
-                }
+                SendPlayerNotices(p, targetLevel, arguments["TargetUser"], isBlacklisted, arguments["Reason"]);
             }
-            else { // Blacklist the user from the map
+            else {
+                isBlacklisted = UpdateLvlPerbuild(p, targetLevel, arguments["TargetUser"]);
 
-                // Reason argument found, use it.
-                if (arguments.ContainsKey("Reason")) {
-                    Find("perbuild").Use(p, string.Format("-{0}", arguments["TargetUser"]));
-
-                    Find("warn").Use(p, string.Format("{0} %0blacklisted %ffrom {1} %ffor %c{2}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName, arguments["Reason"]));
-
-                    Find("send").Use(p, string.Format("{0} %0blacklisted %ffrom {1} %ffor %c{2}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName, arguments["Reason"]));
+                if (BlacklistPlugin.DoPervisitBlacklist) {
+                    UpdateLvlPervisit(p, targetLevel, arguments["TargetUser"]);
                 }
-                else {
-                    Find("perbuild").Use(p, string.Format("-{0}", arguments["TargetUser"]));
 
-                    Find("warn").Use(p, string.Format("{0} %0blacklisted %ffrom {1}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName));
-
-                    Find("send").Use(p, string.Format("{0} %0blacklisted %ffrom {1}%f.",
-                        arguments["TargetUser"], targetLevel.ColoredName));
-                }
+                SendPlayerNotices(p, targetLevel, arguments["TargetUser"], isBlacklisted);
             }
-        }
-
-        /// <summary>
-        /// IsAlreadyBlacklisted
-        /// Description: Helper function to determine whether a user has
-        /// previously been blacklisted from a specified level
-        /// </summary>
-        /// <param name="p">Player issuing the command</param>
-        /// <param name="targetLevel">The specified level to check</param>
-        /// <param name="targetUser">The specified user to check</param>
-        /// <returns>true/false depending on a previous blacklist entry</returns>
-        public bool IsAlreadyBlacklisted(Player p, Level targetLevel, string targetUser) {
-            LevelConfig lvlConfig = LevelInfo.GetConfig(targetLevel.name);
-            return lvlConfig.BuildBlacklist.CaselessContains(targetUser);
         }
 
         /// <summary>
@@ -380,8 +344,8 @@ namespace MCGalaxy
             }
 
             // Check for valid map name
-            if (LevelInfo.ValidName(words[1])) {
-                arguments.Add("Map", words[1]);
+            if (LevelInfo.MapExists(words[1].ToLower())) {
+                arguments.Add("Map", words[1].ToLower());
             }
             else {
                 p.Message(string.Format("%cMap %f{0} %cnot found. Did you spell it correctly?", words[1]));
@@ -400,6 +364,88 @@ namespace MCGalaxy
                 return arguments;
             }
             return arguments;
+        }
+
+        /// <summary>
+        /// SendPlayerNotices
+        /// Description: Helper function to send the correct player notices 
+        /// upon a moderation action.
+        /// </summary>
+        /// <param name="p">User issuing the command</param>
+        /// <param name="targetLevel">The level to blacklist on</param>
+        /// <param name="targetUser">The user to blacklist</param>
+        /// <param name="reason">The reason for the blacklist</param>
+        /// <param name="toBlacklist">Whether to blacklist or whitelist the user</param>
+        public void SendPlayerNotices(Player p, Level targetLevel, string targetUser, bool toBlacklist, string reason = "") {
+            if (toBlacklist) {
+                if (!string.IsNullOrEmpty(reason)) {
+                    Find("warn").Use(p, string.Format("{0} %0blacklisted %ffrom {1} %ffor %c{2}%f.",
+                        targetUser, targetLevel.ColoredName, reason));
+
+                    Find("send").Use(p, string.Format("{0} %0blacklisted %ffrom {1} %ffor %c{2}%f.",
+                        targetUser, targetLevel.ColoredName, reason));
+                }
+                else {
+                    Find("warn").Use(p, string.Format("{0} %0blacklisted %ffrom {1}%f.",
+                        targetUser, targetLevel.ColoredName));
+
+                    Find("send").Use(p, string.Format("{0} %0blacklisted %ffrom {1}%f.",
+                        targetUser, targetLevel.ColoredName));
+                }
+            }
+            else {
+                if (!string.IsNullOrEmpty(reason)) {
+                    Chat.MessageGlobal(string.Format("{0} %abuild whitelisted {1} %fon %b{2} %ffor %a{3}%f.",
+                        p.ColoredName, targetUser, targetLevel.ColoredName, reason));
+
+                    Find("send").Use(p, string.Format("{0} %abuild whitelisted %fon {1} %ffor %a{2}%f.",
+                        targetUser, targetLevel.ColoredName, reason));
+                }
+                else {
+                    Chat.MessageGlobal(string.Format("{0} %abuild whitelisted %f{1} on {2}%f.",
+                        p.ColoredName, targetUser, targetLevel.ColoredName));
+
+                    Find("send").Use(p, string.Format("{0} %abuild whitelisted %fon {1}%f.",
+                        targetUser, targetLevel.ColoredName));
+                }
+            }
+        }
+
+        /// <summary>
+        /// UpdateLvlPerbuild
+        /// Description: Helper function that checks the target user's map
+        /// perbuild status and updates the status accordingly.
+        /// </summary>
+        /// <param name="p">User issuing the command</param>
+        /// <param name="targetLevel">The level to check and update</param>
+        /// <param name="targetUser">The user to check and update</param>
+        /// /// <returns>True if blacklisted, False if whitelisted</returns>
+        public bool UpdateLvlPerbuild(Player p, Level targetLevel, string targetUser) {
+            if (!targetLevel.Config.BuildBlacklist.CaselessContains(targetUser)) {
+                Find("perbuild").Use(p, string.Format("-{0}", targetUser));
+                return true;
+            }
+            else {
+                Find("perbuild").Use(p, string.Format("+{0}", targetUser));
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// UpdateLvlPervisit
+        /// Description: Helper function that checks the target user's map 
+        /// pervisit status and updates the status accordingly.
+        /// </summary>
+        /// <param name="p">User issuing the command</param>
+        /// <param name="targetLevel">The level to check and update</param>
+        /// <param name="targetUser">The user to check and update</param>
+        public void UpdateLvlPervisit(Player p, Level targetLevel, string targetUser) {
+            if (!targetLevel.Config.VisitBlacklist.CaselessContains(targetUser)) {
+                Find("pervisit").Use(p, string.Format("-{0}", targetUser));
+            }
+            else {
+                Find("pervisit").Use(p, string.Format("+{0}", targetUser));
+            }
         }
 
         public override void Help(Player p) {
