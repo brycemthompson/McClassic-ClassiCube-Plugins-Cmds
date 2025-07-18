@@ -72,7 +72,7 @@ namespace MCGalaxy
             // Cancel the command if found in the blacklist
             if (commands.CaselessContains(command)) {
                 p.cancelcommand = true;
-                p.Message(string.Format("%cYou're %0blacklisted %cfrom using %b{0}%c.", command));
+                p.Message("%cYou're %0blacklisted %cfrom using %b{0}%c.", command);
             }
         }
     }
@@ -178,7 +178,7 @@ namespace MCGalaxy
             if (who == null) {
                 string targetUser = PlayerInfo.FindMatchesPreferOnline(p, words[0]);
                 if (string.IsNullOrEmpty(targetUser)) {
-                    p.Message(string.Format("%cPlayer %f{0} %cnot found. Do you spell the username correctly?"), words[0]);
+                    p.Message("%cPlayer %f{0} %cnot found. Do you spell the username correctly?", words[0]);
                     return null;
                 }
                 arguments.Add("TargetUser", targetUser);
@@ -194,7 +194,7 @@ namespace MCGalaxy
                     arguments.Add("Command", words[1]);
                 }
                 else {
-                    p.Message(string.Format("%cCommand %f{0} %cwas not found. Are you sure you spelled it correctly?", words[1]));
+                    p.Message("%cCommand %f{0} %cwas not found. Are you sure you spelled it correctly?", words[1]);
                     return null;
                 }
 
@@ -321,7 +321,7 @@ namespace MCGalaxy
             if (who == null) {
                 string targetUser = PlayerInfo.FindMatchesPreferOnline(p, words[0]);
                 if (string.IsNullOrEmpty(targetUser)) {
-                    p.Message(string.Format("%cPlayer %f{0} %cnot found. Do you spell the username correctly?"), words[0]);
+                    p.Message("%cPlayer %f{0} %cnot found. Do you spell the username correctly?", words[0]);
                     return null;
                 }
                 // Check if CC account plus is active. If it is, make sure the account has a + on the end of it
@@ -348,7 +348,7 @@ namespace MCGalaxy
                 arguments.Add("Map", words[1].ToLower());
             }
             else {
-                p.Message(string.Format("%cMap %f{0} %cnot found. Did you spell it correctly?", words[1]));
+                p.Message("%cMap %f{0} %cnot found. Did you spell it correctly?", words[1]);
                 Help(p);
                 return null;
             }
